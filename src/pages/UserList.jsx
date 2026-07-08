@@ -1,30 +1,24 @@
 import { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import UserCard from '../components/UserCard';
-import SearchBar from '../components/SearchBar';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default function UserList() {
-  const { users, searchQuery } = useContext(AppContext);
+  const { users, loading, error } = useContext(AppContext);
 
-  // Filtro inteligente para buscar usuários por nome ou username
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="users-page">
-      <h2>👥 Conheça os Desenvolvedores da Rede</h2>
-      
-      {/* Reutiliza o componente de feedback de busca */}
-      <SearchBar count={filteredUsers.length} query={searchQuery} />
-      
+    <div className="users-container">
+      <h2 style={{ marginBottom: '20px', fontSize: '1.4rem', fontWeight: '700' }}>
+        👥 Conecte-se com outros Desenvolvedores
+      </h2>
       <div className="users-grid">
-        {filteredUsers.length > 0 ? (
-          filteredUsers.map(user => <UserCard key={user.id} user={user} />)
-        ) : (
-          <p className="no-results">Nenhum desenvolvedor corresponde à sua busca.</p>
-        )}
+        {users.map(user => (
+          <UserCard key={user.id} user={user} />
+        ))}
       </div>
     </div>
   );
